@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">换脸变装</string>
+    <string name="network_unavailable">网络不可用</string>
+    <string name="action_share">分享</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="hello_world">Hello world!</string>
+
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list
+    android:oneshot="false"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:duration="100" android:drawable="@drawable/netload_01" />
+    <item android:duration="100" android:drawable="@drawable/netload_02" />
+    <item android:duration="100" android:drawable="@drawable/netload_03" />
+    <item android:duration="100" android:drawable="@drawable/netload_04" />
+    <item android:duration="100" android:drawable="@drawable/netload_05" />
+    <item android:duration="100" android:drawable="@drawable/netload_06" />
+    <item android:duration="100" android:drawable="@drawable/netload_07" />
+    <item android:duration="100" android:drawable="@drawable/netload_08" />
+    <item android:duration="100" android:drawable="@drawable/netload_09" />
+    <item android:duration="100" android:drawable="@drawable/netload_10" />
+    <item android:duration="100" android:drawable="@drawable/netload_11" />
+    <item android:duration="100" android:drawable="@drawable/netload_12" />
+</animation-list>
