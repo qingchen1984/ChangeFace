@@ -1,9 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context="com.changeface.swb.changeface.activity.DetailActivity">
+      tools:context="com.changeface.swb.changeface.activity.ClothesDetailActivity">
     <item android:id="@+id/action_share"
           android:title="@string/action_share"
-          android:icon="@drawable/icon_share"
+          android:icon="@drawable/icon_shareapp"
           app:showAsAction="ifRoom|withText"/>
 </menu>

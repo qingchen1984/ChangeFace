@@ -2,6 +2,7 @@ package com.changeface.swb.changeface.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.changeface.swb.changeface.activity.ChangeFaceActivity;
 
@@ -13,19 +14,18 @@ import com.changeface.swb.changeface.activity.ChangeFaceActivity;
  */
 // js通信接口
 public class JavascriptInterface {
+    public static final String TAG = JavascriptInterface.class.getSimpleName();
     private Context context;
 
     public JavascriptInterface(Context context) {
         this.context = context;
     }
 
-    public void openImage(String img) {
-        System.out.println(img);
-        //
+    public void openImage(String imgPath) {
+        Log.i(TAG,imgPath);
         Intent intent = new Intent();
-        intent.putExtra("image", img);
+        intent.putExtra("image", imgPath);
         intent.setClass(context, ChangeFaceActivity.class);
         context.startActivity(intent);
-        System.out.println(img);
     }
 }

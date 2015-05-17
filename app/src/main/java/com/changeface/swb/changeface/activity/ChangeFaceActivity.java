@@ -43,8 +43,8 @@ public class ChangeFaceActivity extends BaseActivity implements View.OnClickList
         if (mImgPath != null) {
             ImageLoader.getInstance().displayImage(mImgPath, mImg, ImageLoaderUtil.getImageOptions(R.drawable.image_loaded_by_default));
         }
-//        Animation animation = AnimationUtils.loadAnimation(this, R.anim.start_fadescale_in);
-//        mImg.startAnimation(animation);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.start_fadescale_in);
+        mImg.startAnimation(animation);
         mBack = (ImageButton) findViewById(R.id.back);
         mCamera = (ImageButton) findViewById(R.id.camera);
         mTakePhoto = (ImageButton) findViewById(R.id.take_photo);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_color">#ff339ee2</color>
+    <color name="primary_color">#ffffffff</color>
     <color name="dark_primary_color">#ff2b84be</color>
     <color name="main_frame_bg">#f6f6f6</color>
     <color name="accent_color">#ff1ec52b</color>
@@ -11,4 +11,5 @@
     <color name="dark_transparent">#22000000</color>
     <color name="text_color_light">#AAAAAA</color>
     <color name="text_color_dark">#666666</color>
+    <color name="custom_title_color">#FFF67F93</color>
 </resources>

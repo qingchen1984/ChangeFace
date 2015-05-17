@@ -2,7 +2,7 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.changeface.swb.changeface.activity.DetailActivity">
+                tools:context="com.changeface.swb.changeface.activity.ChangeFaceWebActivity">
             <include
                 android:id="@+id/toolbar"
                 layout="@layout/tool_bar_layout"/>
@@ -14,7 +14,7 @@
                 android:indeterminateOnly="false"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:max="100"
-                android:progressDrawable="@drawable/progress_bar_states"/>
+                android:progressDrawable="@drawable/horizontal_progress_bar_states"/>
             <WebView
                 android:id="@+id/webview"
                 android:layout_below="@id/progress_bar"

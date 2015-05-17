@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.changeface.swb.changeface.R;
-import com.changeface.swb.changeface.entity.HomePage;
+import com.changeface.swb.changeface.entity.ChangeFaceHome;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.List;
@@ -19,10 +19,10 @@ import java.util.List;
  * Date: 2015-05-11
  * Time: 23:11
  */
-public class HomePageAdapter extends DataBaseAdapter<HomePage>{
+public class ChangeFaceHomeAdapter extends DataBaseAdapter<ChangeFaceHome>{
 
 
-    public HomePageAdapter(Context context, List<HomePage> list) {
+    public ChangeFaceHomeAdapter(Context context, List<ChangeFaceHome> list) {
         super(context, list);
     }
 

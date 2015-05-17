@@ -11,51 +11,53 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.changeface.swb.changeface.R;
-import com.changeface.swb.changeface.adapter.HomePageAdapter;
+import com.changeface.swb.changeface.adapter.HomePageAdater;
 import com.changeface.swb.changeface.constant.AppConstants;
 import com.changeface.swb.changeface.entity.HomePage;
+import com.changeface.swb.changeface.entity.HomePageList;
+import com.changeface.swb.changeface.view.paginggridview.PagingGridView;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener{
-    public static final int MSG_REQUEST_INFO = 0;
-    public static final int MSG_SUCCESS = 1;
-    public static final int MSG_FAILURE = 2;
+public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener
+                ,View.OnClickListener{
     private Toolbar mToolbar;
-    private View mLoadingLayout;
-    private ListView mListView;
+    private View mLoading;
+    private PagingGridView mPagingGridView;
+    private HomePageAdater mHomePageAdater;
     private List<HomePage> mHomePages = new ArrayList<>();
     private AsyncHttpClient mAsyncHttpClient;
-    private HomePageAdapter mAdapter;
+    private int mPage = 1;
+    private ImageView mTop;
+
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what){
-                case MSG_REQUEST_INFO:
+                case AppConstants.MSG_REQUEST_INFO:
                     getInfoFromServer();
                     break;
-                case MSG_SUCCESS:
-                    mLoadingLayout.setVisibility(View.GONE);
-                    initHomePage(msg.obj.toString());
+                case AppConstants.MSG_SUCCESS:
+                    mLoading.setVisibility(View.GONE);
+                    initDatas(msg.obj.toString());
                     break;
-                case MSG_FAILURE:
-                    mLoadingLayout.setVisibility(View.GONE);
-                    Toast.makeText(mActivity,R.string.network_unavailable,Toast.LENGTH_SHORT).show();
+                case AppConstants.MSG_FAILURE:
+                    Toast.makeText(mActivity, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
                     break;
             }
         }
@@ -64,31 +66,60 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initViews();
-        mHandler.sendEmptyMessage(MSG_REQUEST_INFO);
+        initView();
     }
-    private void initViews(){
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(mToolbar);
-        mToolbar.setNavigationIcon(R.drawable.ic_title_home_default);
-        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+   private void initView(){
+       mToolbar = (Toolbar) findViewById(R.id.toolbar);
+       setSupportActionBar(mToolbar);
+       mToolbar.setNavigationIcon(R.drawable.icon_active_face);
+       mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Intent intent = new Intent(mActivity,ChangeFaceHomeActivity.class);
+               startActivity(intent);
+           }
+       });
+       getSupportActionBar().setDisplayShowTitleEnabled(false);
+       getSupportActionBar().setDisplayShowCustomEnabled(true);
+       View customView = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_title_layout,null);
+       ((TextView)customView).setText(R.string.app_name);
+       ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(Gravity.CENTER);
+       getSupportActionBar().setCustomView(customView,layoutParams);
+       mLoading = findViewById(R.id.loading);
+       mPagingGridView = (PagingGridView) findViewById(R.id.grid_view);
+       mPagingGridView.setOnItemClickListener(this);
+       mHomePageAdater = new HomePageAdater(this,mHomePages);
+       mPagingGridView.setHasMoreItems(true);
+       mPagingGridView.setPagingableListener(new PagingGridView.Pagingable() {
+           @Override
+           public void onLoadMoreItems() {
+               mPage ++;
+               mHandler.sendEmptyMessage(AppConstants.MSG_REQUEST_INFO);
+           }
 
-            }
-        });
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(true);
-        View customView = LayoutInflater.from(this).inflate(R.layout.actionbar_custom_title_layout,null);
-        ((TextView)customView).setText(R.string.app_name);
-        ActionBar.LayoutParams layoutParams = new ActionBar.LayoutParams(Gravity.CENTER);
-        getSupportActionBar().setCustomView(customView,layoutParams);
-        mLoadingLayout = findViewById(R.id.loading_layout);
-        mListView = (ListView) findViewById(R.id.listview);
-        mAdapter = new HomePageAdapter(mActivity,mHomePages);
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemClickListener(this);
-    }
+           @Override
+           public void onScrollStateChanged(int scrollState,int firstVisibleItem) {
+               switch (scrollState){
+                   case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                       mTop.setVisibility(View.GONE);
+                       break;
+                   case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                       if(firstVisibleItem == 0) {
+                         mTop.setVisibility(View.GONE);
+                       }else {
+                         mTop.setVisibility(View.VISIBLE);
+                       }
+                       break;
+                   case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                       mTop.setVisibility(View.GONE);
+                       break;
+               }
+           }
+       });
+       mHandler.sendEmptyMessage(AppConstants.MSG_REQUEST_INFO);
+       mTop = (ImageView) findViewById(R.id.top);
+       mTop.setOnClickListener(this);
+   }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -116,30 +147,43 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             mAsyncHttpClient = new AsyncHttpClient();
         }
         mAsyncHttpClient.setTimeout(7000);
-        mAsyncHttpClient.get(AppConstants.HOME_PAGE_URL,new AsyncHttpResponseHandler() {
+        RequestParams params = new RequestParams();
+        params.put("p",mPage);
+        mAsyncHttpClient.get(AppConstants.HOME_PAGE_BASE_URL,params,new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                mHandler.sendMessage(mHandler.obtainMessage(MSG_SUCCESS,new String(bytes,0,bytes.length)));
+                mHandler.sendMessage(mHandler.obtainMessage(AppConstants.MSG_SUCCESS,new String(bytes,0,bytes.length)));
             }
 
             @Override
             public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                mHandler.sendEmptyMessage(MSG_FAILURE);
+                mHandler.sendEmptyMessage(AppConstants.MSG_FAILURE);
             }
         });
     }
-    private void initHomePage(String json){
-        try {
-            List<HomePage> list = new Gson().fromJson(json, new TypeToken<List<HomePage>>() {
-            }.getType());
-            mHomePages.addAll(list);
-            mAdapter.notifyDataSetChanged();
-        }catch (Exception e){
-            e.printStackTrace();
-            mHandler.sendEmptyMessage(MSG_FAILURE);
+    private void initDatas(String json){
+        if(json != null && !"".equals(json)) {
+            try {
+                HomePageList homePageList = new Gson().fromJson(json, HomePageList.class);
+                mHomePages.addAll(homePageList.getItems());
+                if (mPagingGridView.getAdapter() == null) {
+                    mPagingGridView.setAdapter(mHomePageAdater);
+                }
+                mHomePageAdater.notifyDataSetChanged();
+                mPagingGridView.setHasMoreItems(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                mHandler.sendEmptyMessage(AppConstants.MSG_FAILURE);
+            }
+        }else{
+            mPagingGridView.setHasMoreItems(false);
         }
-
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -149,13 +193,30 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mHomePages.clear();
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        Intent intent = new Intent(this,DetailActivity.class);
+        Intent intent = new Intent(this,ClothesDetailActivity.class);
         intent.putExtra("title",mHomePages.get(i).getTitle());
         intent.putExtra("url",mHomePages.get(i).getUrl());
+        if(mHomePages.get(i).getMainImage() != null
+                && mHomePages.get(i).getMainImage().getUrl()!= null
+                && !"".equals(mHomePages.get(i).getMainImage().getUrl()))
+        intent.putExtra("imageUrl",mHomePages.get(i).getMainImage().getUrl());
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.top:
+                if(mHomePageAdater != null){
+                    mPagingGridView.setAdapter(mHomePageAdater);
+                }
+                mTop.setVisibility(View.GONE);
+                break;
+        }
     }
 }

@@ -1,11 +1,9 @@
 package com.changeface.swb.changeface.activity;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,8 +20,8 @@ import android.widget.TextView;
 import com.changeface.swb.changeface.R;
 import com.changeface.swb.changeface.util.JavascriptInterface;
 
-public class DetailActivity extends BaseActivity {
-    private static final String TAG = DetailActivity.class.getSimpleName();
+public class ChangeFaceWebActivity extends BaseActivity {
+    private static final String TAG = ChangeFaceWebActivity.class.getSimpleName();
     private Toolbar mToolbar;
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -32,7 +30,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_change_face_web);
         mTitle = getIntent().getStringExtra("title");
         mUrl = getIntent().getStringExtra("url");
         initViews();
@@ -40,7 +38,7 @@ public class DetailActivity extends BaseActivity {
     private void initViews(){
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        mToolbar.setNavigationIcon(R.drawable.nav_back);
+        mToolbar.setNavigationIcon(R.drawable.icon_actionbar_back);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,7 +100,7 @@ public class DetailActivity extends BaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_detail, menu);
+        getMenuInflater().inflate(R.menu.menu_change_face_web, menu);
         return true;
     }
 
@@ -114,9 +112,9 @@ public class DetailActivity extends BaseActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_share) {
-            return true;
-        }
+//        if (id == R.id.action_share) {
+//            return true;
+//        }
 
         return super.onOptionsItemSelected(item);
     }

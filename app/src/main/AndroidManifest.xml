@@ -21,13 +21,23 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.DetailActivity"
+            android:name=".activity.ChangeFaceHomeActivity"
+            android:label="@string/change_face"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.ChangeFaceWebActivity"
             android:label="@string/title_activity_detail"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".activity.ChangeFaceActivity"
             android:label="@string/title_activity_change_face"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.ClothesDetailActivity"
+            android:label="@string/title_activity_clothes"
             android:screenOrientation="portrait">
         </activity>
     </application>

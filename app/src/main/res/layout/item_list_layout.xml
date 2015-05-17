@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="3dp"
             android:layout_height="15dp"
-            android:background="@color/primary_color"
+            android:background="@color/custom_title_color"
             android:layout_marginLeft="5dp"/>
         <TextView
             android:id="@+id/time"
