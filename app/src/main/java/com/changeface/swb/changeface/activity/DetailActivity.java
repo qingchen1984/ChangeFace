@@ -1,8 +1,11 @@
 package com.changeface.swb.changeface.activity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,8 +20,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.changeface.swb.changeface.R;
+import com.changeface.swb.changeface.util.JavascriptInterface;
 
 public class DetailActivity extends BaseActivity {
+    private static final String TAG = DetailActivity.class.getSimpleName();
     private Toolbar mToolbar;
     private WebView mWebView;
     private ProgressBar mProgressBar;
@@ -56,6 +61,7 @@ public class DetailActivity extends BaseActivity {
 //        webSettings.setSupportZoom(true); // 支持缩放
 //        webSettings.setBuiltInZoomControls(true);// 设置显示缩放按钮
         mWebView.loadUrl(mUrl);
+        mWebView.addJavascriptInterface(new JavascriptInterface(this),"imagelistner");
         mWebView.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
@@ -70,8 +76,25 @@ public class DetailActivity extends BaseActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
+         //       addImageClickListner();
+               return true;
+            }
+
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // html加载完成之后，添加监听图片的点击js函数
+                addImageClickListner();
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
             }
         });
     }
@@ -112,5 +135,20 @@ public class DetailActivity extends BaseActivity {
         // to the default
         // system behavior (probably exit the activity)
         return super.onKeyDown(keyCode, event);
+    }
+    // 注入js函数监听
+    private void addImageClickListner() {
+        // 这段js函数的功能就是，遍历所有的img几点，并添加onclick函数，函数的功能是在图片点击的时候调用本地java接口并传递url过去
+        mWebView.loadUrl("javascript:(function(){" +
+                "var objs = document.getElementsByTagName(\"img\"); " +
+                "for(var i=0;i<objs.length;i++)  " +
+                "{"
+                +"if(i!=0)"
+                + "    objs[i].onclick=function()  " +
+                "    {  "
+                + "        window.imagelistner.openImage(this.src);  " +
+                "    }  " +
+                "}" +
+                "})()");
     }
 }

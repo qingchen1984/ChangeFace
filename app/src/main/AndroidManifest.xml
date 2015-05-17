@@ -23,6 +23,11 @@
         <activity
             android:name=".activity.DetailActivity"
             android:label="@string/title_activity_detail"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.ChangeFaceActivity"
+            android:label="@string/title_activity_change_face"
             android:screenOrientation="portrait">
         </activity>
     </application>
