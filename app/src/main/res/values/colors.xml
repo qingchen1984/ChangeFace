@@ -6,9 +6,9 @@
     <color name="accent_color">#ff1ec52b</color>
     <color name="dark_accent_color">#30975D</color>
     <color name="black_26_alpha">#42000000</color>
-    <color name="divider">#ffdedede</color>
+    <color name="divider">#ffe0e0e0</color>
     <color name="transparent">#00000000</color>
-    <color name="dark_transparent">#22000000</color>
+    <color name="dark_transparent">#77000000</color>
     <color name="text_color_light">#AAAAAA</color>
     <color name="text_color_dark">#666666</color>
     <color name="custom_title_color">#FFF67F93</color>

@@ -39,4 +39,18 @@
          android:layout_alignParentRight="true"
          android:layout_margin="8dp"
          android:visibility="gone"/>
+        <View
+            android:id="@+id/cancle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/dark_transparent"
+            android:visibility="gone"/>
+        <include
+            android:id="@+id/share_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/share_layout"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
+
 </RelativeLayout>

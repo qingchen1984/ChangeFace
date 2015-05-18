@@ -7,10 +7,13 @@ import android.os.Message;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -22,11 +25,14 @@ import com.changeface.swb.changeface.adapter.HomePageAdater;
 import com.changeface.swb.changeface.constant.AppConstants;
 import com.changeface.swb.changeface.entity.HomePage;
 import com.changeface.swb.changeface.entity.HomePageList;
+import com.changeface.swb.changeface.util.ShareUtil;
 import com.changeface.swb.changeface.view.paginggridview.PagingGridView;
+import com.changeface.swb.changeface.view.share.ShareLayout;
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.umeng.socialize.sso.UMSsoHandler;
 
 import org.apache.http.Header;
 
@@ -34,9 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener
-                ,View.OnClickListener{
+                ,View.OnClickListener,ShareLayout.ShareListener{
     private Toolbar mToolbar;
-    private View mLoading;
+    private View mLoading,mSharePanel,mCancleShare;
     private PagingGridView mPagingGridView;
     private HomePageAdater mHomePageAdater;
     private List<HomePage> mHomePages = new ArrayList<>();
@@ -67,6 +73,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        com.umeng.socialize.utils.Log.LOG = true;
     }
    private void initView(){
        mToolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -93,21 +100,21 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
        mPagingGridView.setPagingableListener(new PagingGridView.Pagingable() {
            @Override
            public void onLoadMoreItems() {
-               mPage ++;
+               mPage++;
                mHandler.sendEmptyMessage(AppConstants.MSG_REQUEST_INFO);
            }
 
            @Override
-           public void onScrollStateChanged(int scrollState,int firstVisibleItem) {
-               switch (scrollState){
+           public void onScrollStateChanged(int scrollState, int firstVisibleItem) {
+               switch (scrollState) {
                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
                        mTop.setVisibility(View.GONE);
                        break;
                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                       if(firstVisibleItem == 0) {
-                         mTop.setVisibility(View.GONE);
-                       }else {
-                         mTop.setVisibility(View.VISIBLE);
+                       if (firstVisibleItem == 0) {
+                           mTop.setVisibility(View.GONE);
+                       } else {
+                           mTop.setVisibility(View.VISIBLE);
                        }
                        break;
                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
@@ -119,6 +126,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
        mHandler.sendEmptyMessage(AppConstants.MSG_REQUEST_INFO);
        mTop = (ImageView) findViewById(R.id.top);
        mTop.setOnClickListener(this);
+       mSharePanel = findViewById(R.id.share_panel);
+       mCancleShare = findViewById(R.id.cancle);
+       mCancleShare.setOnClickListener(this);
+       ((ShareLayout)mSharePanel).setShareListener(this);
    }
 
     @Override
@@ -137,6 +148,7 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_share) {
+            showSharePanel();
             return true;
         }
 
@@ -217,6 +229,70 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 }
                 mTop.setVisibility(View.GONE);
                 break;
+            case R.id.cancle:
+                hideSharePanel();
+                break;
+
         }
+    }
+
+    @Override
+    public void shareToQQ() {
+        ShareUtil.shareToQQ(mActivity);
+    }
+
+    @Override
+    public void shareToQQZone() {
+        ShareUtil.shareToQQZone(mActivity);
+    }
+
+    @Override
+    public void shareToSina() {
+        ShareUtil.shareToSina(mActivity);
+    }
+
+    @Override
+    public void shareToSMS() {
+        ShareUtil.shareToSMS(mActivity);
+    }
+
+    @Override
+    public void shareToEmail() {
+        //ShareUtil.shareToEmail(mActivity);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        /**使用SSO授权必须添加如下代码 */
+        UMSsoHandler ssoHandler = ShareUtil.getUMSocialService().getConfig().getSsoHandler(
+                resultCode);
+        if (ssoHandler != null) {
+            ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
+    }
+    public void showSharePanel(){
+        mSharePanel.setVisibility(View.VISIBLE);
+        Animation animation = AnimationUtils.loadAnimation(this,R.anim.umeng_socialize_slide_in_from_bottom);
+        mSharePanel.startAnimation(animation);
+        mCancleShare.setVisibility(View.VISIBLE);
+        Animation animation2 = AnimationUtils.loadAnimation(this,R.anim.umeng_socialize_fade_in);
+        mCancleShare.startAnimation(animation2);
+    }
+    public void hideSharePanel(){
+        mSharePanel.setVisibility(View.GONE);
+        Animation animation = AnimationUtils.loadAnimation(this,R.anim.umeng_socialize_slide_out_from_bottom);
+        mSharePanel.startAnimation(animation);
+        mCancleShare.setVisibility(View.GONE);
+        Animation animation2 = AnimationUtils.loadAnimation(this,R.anim.umeng_socialize_fade_out
+        );
+        mCancleShare.startAnimation(animation2);
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && View.VISIBLE == mSharePanel.getVisibility()) {
+            hideSharePanel();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
