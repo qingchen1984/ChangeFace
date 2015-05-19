@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ChangeFaceHomeActivity extends BaseActivity implements AdapterView.OnItemClickListener{
+public class ChangeFaceHomeActivity extends BaseActivity implements AdapterView.OnItemClickListener
+        , View.OnClickListener {
 
     private Toolbar mToolbar;
     private View mLoadingLayout;
@@ -39,12 +42,16 @@ public class ChangeFaceHomeActivity extends BaseActivity implements AdapterView.
     private List<ChangeFaceHome> mHomePages = new ArrayList<>();
     private AsyncHttpClient mAsyncHttpClient;
     private ChangeFaceHomeAdapter mAdapter;
+    private View mLoadingError;
+    private Button mReloading;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what){
                 case AppConstants.MSG_REQUEST_INFO:
+                    mLoadingError.setVisibility(View.GONE);
+                    mLoadingLayout.setVisibility(View.VISIBLE);
                     getInfoFromServer();
                     break;
                 case AppConstants.MSG_SUCCESS:
@@ -53,7 +60,7 @@ public class ChangeFaceHomeActivity extends BaseActivity implements AdapterView.
                     break;
                 case AppConstants.MSG_FAILURE:
                     mLoadingLayout.setVisibility(View.GONE);
-                    Toast.makeText(mActivity,R.string.network_unavailable,Toast.LENGTH_SHORT).show();
+                    mLoadingError.setVisibility(View.VISIBLE);
                     break;
             }
         }
@@ -86,6 +93,9 @@ public class ChangeFaceHomeActivity extends BaseActivity implements AdapterView.
         mAdapter = new ChangeFaceHomeAdapter(mActivity,mHomePages);
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(this);
+        mLoadingError = findViewById(R.id.loading_error);
+        mReloading = (Button) findViewById(R.id.reloading);
+        mReloading.setOnClickListener(this);
     }
 
     @Override
@@ -155,5 +165,14 @@ public class ChangeFaceHomeActivity extends BaseActivity implements AdapterView.
         intent.putExtra("title",mHomePages.get(i).getTitle());
         intent.putExtra("url",mHomePages.get(i).getUrl());
         startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.reloading:
+                mHandler.sendEmptyMessage(AppConstants.MSG_REQUEST_INFO);
+                break;
+        }
     }
 }

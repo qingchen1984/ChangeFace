@@ -16,4 +16,7 @@
     <string name="share_layout_title">分享换脸试衣到...</string>
     <string name="share_content">"换脸试衣是一款。。。"</string>
     <string name="share_url">"https://github.com/shewenbiao/ChangeFace"</string>
+    <string name="title_activity_welcom">WelcomeActivity</string>
+    <string name="reloading">重新加载</string>
+
 </resources>

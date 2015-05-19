@@ -73,7 +73,7 @@ public class ShareUtil {
 //设置分享title
         qqShareContent.setTitle(context.getResources().getString(R.string.app_name));
 //设置分享图片
-        qqShareContent.setShareImage(new UMImage(context, R.drawable.ic_launcher));
+        qqShareContent.setShareImage(new UMImage(context, R.drawable.logo));
 //设置点击分享内容的跳转链接
         qqShareContent.setTargetUrl(context.getString(R.string.share_url));
         return qqShareContent;
@@ -87,7 +87,7 @@ public class ShareUtil {
 //设置分享内容的标题
         qzoneContent.setTitle(context.getResources().getString(R.string.app_name));
 //设置分享图片
-        qzoneContent.setShareImage(new UMImage(context, R.drawable.ic_launcher));
+        qzoneContent.setShareImage(new UMImage(context, R.drawable.logo));
         return qzoneContent;
     }
 
@@ -108,7 +108,7 @@ public class ShareUtil {
 //        mController.setShareContent("这是文字分享内容");
 //        // 图片分享内容
 //        mController.setShareMedia(new UMImage(context,
-//                R.drawable.ic_launcher));
+//                R.drawable.logo));
         // 参数1为Context类型对象， 参数2为要分享到的目标平台， 参数3为分享操作的回调接口
         mController.postShare(context, platform,
                 new SocializeListeners.SnsPostListener() {

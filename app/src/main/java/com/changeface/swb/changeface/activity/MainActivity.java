@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,13 +43,14 @@ import java.util.List;
 public class MainActivity extends BaseActivity implements AdapterView.OnItemClickListener
                 ,View.OnClickListener,ShareLayout.ShareListener{
     private Toolbar mToolbar;
-    private View mLoading,mSharePanel,mCancleShare;
+    private View mLoading, mSharePanel, mCancleShare, mLoadingError;
     private PagingGridView mPagingGridView;
     private HomePageAdater mHomePageAdater;
     private List<HomePage> mHomePages = new ArrayList<>();
     private AsyncHttpClient mAsyncHttpClient;
     private int mPage = 1;
     private ImageView mTop;
+    private Button mReloading;
 
     private Handler mHandler = new Handler(){
         @Override
@@ -56,6 +58,10 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
             super.handleMessage(msg);
             switch (msg.what){
                 case AppConstants.MSG_REQUEST_INFO:
+                    if (mPage == 1) {
+                        mLoadingError.setVisibility(View.GONE);
+                        mLoading.setVisibility(View.VISIBLE);
+                    }
                     getInfoFromServer();
                     break;
                 case AppConstants.MSG_SUCCESS:
@@ -63,7 +69,12 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                     initDatas(msg.obj.toString());
                     break;
                 case AppConstants.MSG_FAILURE:
-                    Toast.makeText(mActivity, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
+                    if (mPage == 1) {
+                        mLoading.setVisibility(View.GONE);
+                        mLoadingError.setVisibility(View.VISIBLE);
+                    } else {
+                        Toast.makeText(mActivity, R.string.network_unavailable, Toast.LENGTH_SHORT).show();
+                    }
                     break;
             }
         }
@@ -130,6 +141,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
        mCancleShare = findViewById(R.id.cancle);
        mCancleShare.setOnClickListener(this);
        ((ShareLayout)mSharePanel).setShareListener(this);
+       mLoadingError = findViewById(R.id.loading_error);
+       mReloading = (Button) findViewById(R.id.reloading);
+       mReloading.setOnClickListener(this);
    }
 
     @Override
@@ -231,6 +245,9 @@ public class MainActivity extends BaseActivity implements AdapterView.OnItemClic
                 break;
             case R.id.cancle:
                 hideSharePanel();
+                break;
+            case R.id.reloading:
+                mHandler.sendEmptyMessage(AppConstants.MSG_REQUEST_INFO);
                 break;
 
         }
