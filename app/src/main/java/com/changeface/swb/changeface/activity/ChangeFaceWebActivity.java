@@ -74,7 +74,7 @@ public class ChangeFaceWebActivity extends BaseActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-         //       addImageClickListner();
+                addImageClickListner();
                return true;
             }
 
