@@ -70,33 +70,34 @@ public class ChangeFaceWebActivity extends BaseActivity {
                 super.onProgressChanged(view, newProgress);
             }
         });
-        mWebView.setWebViewClient(new WebViewClient() {
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                addImageClickListner();
-               return true;
-            }
-
-            @Override
-            public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                super.onPageStarted(view, url, favicon);
-            }
-
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                // html加载完成之后，添加监听图片的点击js函数
-                addImageClickListner();
-            }
-
-            @Override
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                super.onReceivedError(view, errorCode, description, failingUrl);
-            }
-        });
+        mWebView.setWebViewClient(new MyWebViewClient());
     }
+    private class MyWebViewClient extends WebViewClient{
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //  addImageClickListner();
+            return true;
+        }
 
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            view.getSettings().setJavaScriptEnabled(true);
+            super.onPageStarted(view, url, favicon);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            view.getSettings().setJavaScriptEnabled(true);
+            super.onPageFinished(view, url);
+            // html加载完成之后，添加监听图片的点击js函数
+            addImageClickListner();
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -142,10 +143,12 @@ public class ChangeFaceWebActivity extends BaseActivity {
                 "for(var i=0;i<objs.length;i++)  " +
                 "{"
                 +"if(i!=0)"
+                +"{"
                 + "    objs[i].onclick=function()  " +
                 "    {  "
                 + "        window.imagelistner.openImage(this.src);  " +
                 "    }  " +
+                "}" +
                 "}" +
                 "})()");
     }

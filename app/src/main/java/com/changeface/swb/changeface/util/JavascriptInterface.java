@@ -20,7 +20,7 @@ public class JavascriptInterface {
     public JavascriptInterface(Context context) {
         this.context = context;
     }
-
+    @android.webkit.JavascriptInterface
     public void openImage(String imgPath) {
         Log.i(TAG,imgPath);
         Intent intent = new Intent();
